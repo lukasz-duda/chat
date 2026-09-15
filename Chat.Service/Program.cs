@@ -12,7 +12,7 @@ builder.Services.AddHttpClient<OllamaChatClient>((serviceProvider, client) =>
 
 var app = builder.Build();
 
-app.MapGet("/", () => "ChatBot.Service");
+app.MapGet("/", () => "Chat.Service");
 
 app.MapChatBot();
 

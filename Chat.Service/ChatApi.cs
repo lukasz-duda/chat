@@ -1,4 +1,4 @@
-namespace ChatBot.Service;
+namespace Chat.Service;
 
 public static class ChatApi
 {
