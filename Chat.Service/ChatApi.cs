@@ -2,7 +2,7 @@ namespace Chat.Service;
 
 public static class ChatApi
 {
-    public static IEndpointRouteBuilder MapChatBot(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapChat(this IEndpointRouteBuilder app)
     {
         app.MapPost("/chat", async (
             ChatRequest request,

@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Options;
 
-namespace ChatBot.Service;
+namespace Chat.Service;
 
 public sealed class OllamaChatClient
 {

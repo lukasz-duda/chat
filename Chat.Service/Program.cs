@@ -1,4 +1,4 @@
-using ChatBot.Service;
+using Chat.Service;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +14,6 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Chat.Service");
 
-app.MapChatBot();
+app.MapChat();
 
 app.Run();
