@@ -1,0 +1,72 @@
+:root {
+  font-size: 16px;
+}
+
+body,
+div,
+span,
+input,
+button {
+  font-family: Verdana;
+  font-size: 1rem;
+}
+
+.chat-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.message-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.user-message,
+.assistant-message {
+  margin-bottom: 1rem;
+}
+
+.user-message {
+  text-align: right;
+  color: rgb(62, 62, 135);
+}
+
+.assistant-message {
+  text-align: left;
+  color: #666;
+}
+
+.loading-message {
+  font-style: italic;
+  margin-top: 1rem;
+  color: #aaa;
+}
+
+.error-message {
+  color: red;
+  margin-top: 1rem;
+}
+
+.new-message-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.new-message-input {
+  flex-grow: 1;
+  padding: 8px;
+}
+
+.new-message-input:focus {
+  outline: none;
+  border: 2px solid;
+  border-color: rgb(62, 62, 135);
+}
+
+.send-button {
+  padding: 8px 16px;
+}
