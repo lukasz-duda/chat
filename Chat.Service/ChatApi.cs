@@ -1,31 +1,48 @@
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 namespace Chat.Service;
 
 public static class ChatApi
 {
+    public static IServiceCollection AddChatApi(this IServiceCollection services, IConfiguration configuration)
+    {
+        var ollamaOptions = configuration.GetSection("Ollama").Get<OllamaOptions>()
+            ?? throw new InvalidOperationException("Ollama configuration is missing.");
+
+        services.AddOllamaChatCompletion(
+            modelId: ollamaOptions.Model,
+            endpoint: new Uri(ollamaOptions.BaseUrl)
+        );
+
+        return services;
+    }
+
+    public record OllamaOptions(string BaseUrl, string Model);
+
     public static IEndpointRouteBuilder MapChat(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/chat", async (
-            ChatRequest request,
-            OllamaChatClient ollamaClient,
-            CancellationToken cancellationToken) =>
+        app.MapPost("/chat", async (ChatRequest request, IChatCompletionService chatService, HttpContext httpContext) =>
         {
-            if (request.Message is null or { Length: 0 })
+            httpContext.Response.ContentType = "text/event-stream";
+
+            var history = new ChatHistory();
+            history.AddSystemMessage(Prompts.SystemPrompt);
+            
+            foreach (var msg in request.Messages)
             {
-                return Results.Problem(
-                    detail: "The 'message' field is required.",
-                    statusCode: StatusCodes.Status400BadRequest);
+                if (msg.Role == "user") history.AddUserMessage(msg.Content);
+                else if (msg.Role == "assistant") history.AddAssistantMessage(msg.Content);
             }
 
-            try
+            var responseChunks = chatService.GetStreamingChatMessageContentsAsync(history);
+
+            await foreach (var chunk in responseChunks)
             {
-                var response = await ollamaClient.ChatAsync(request.Message, cancellationToken);
-                return Results.Ok(new { response });
-            }
-            catch (OllamaChatException exception)
-            {
-                return Results.Problem(
-                    detail: $"Ollama returned {(int)exception.StatusCode}: {exception.Message}",
-                    statusCode: StatusCodes.Status502BadGateway);
+                if (chunk.Content != null)
+                {
+                    await httpContext.Response.WriteAsync($"data: {chunk.Content}\n\n");
+                    await httpContext.Response.Body.FlushAsync();
+                }
             }
         });
 
@@ -33,4 +50,6 @@ public static class ChatApi
     }
 }
 
-public sealed record ChatRequest(string Message);
+public record ChatRequest(List<ChatMessage> Messages);
+
+public record ChatMessage(string Role, string Content);
