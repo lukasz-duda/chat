@@ -1,5 +1,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.Ollama;
+
 namespace Chat.Service;
 
 public static class ChatApi
@@ -9,10 +11,18 @@ public static class ChatApi
         var ollamaOptions = configuration.GetSection("Ollama").Get<OllamaOptions>()
             ?? throw new InvalidOperationException("Ollama configuration is missing.");
 
-        services.AddOllamaChatCompletion(
+        IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+        kernelBuilder.AddOllamaChatCompletion(
             modelId: ollamaOptions.Model,
             endpoint: new Uri(ollamaOptions.BaseUrl)
         );
+
+        Kernel kernel = kernelBuilder.Build();
+
+        kernel.Plugins.AddFromType<WeatherPlugin>();
+        services.AddSingleton(kernel);
+        var chatService = kernel.GetRequiredService<IChatCompletionService>();
+        services.AddSingleton(chatService);
 
         return services;
     }
@@ -21,20 +31,25 @@ public static class ChatApi
 
     public static IEndpointRouteBuilder MapChat(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/chat", async (ChatRequest request, IChatCompletionService chatService, HttpContext httpContext) =>
+        app.MapPost("/chat", async (ChatRequest request, IChatCompletionService chatService, Kernel kernel, HttpContext httpContext) =>
         {
             httpContext.Response.ContentType = "text/event-stream";
 
             var history = new ChatHistory();
             history.AddSystemMessage(Prompts.SystemPrompt);
-            
+
             foreach (var msg in request.Messages)
             {
                 if (msg.Role == "user") history.AddUserMessage(msg.Content);
                 else if (msg.Role == "assistant") history.AddAssistantMessage(msg.Content);
             }
 
-            var responseChunks = chatService.GetStreamingChatMessageContentsAsync(history);
+            var responseChunks = chatService.GetStreamingChatMessageContentsAsync(
+                history,
+                executionSettings: new OllamaPromptExecutionSettings
+                {
+                    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+                }, kernel: kernel);
 
             await foreach (var chunk in responseChunks)
             {
