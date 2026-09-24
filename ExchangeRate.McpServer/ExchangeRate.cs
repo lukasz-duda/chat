@@ -6,8 +6,8 @@ namespace ExchangeRate.McpServer;
 [McpServerToolType]
 public static class ExchangeRate
 {
-    [McpServerTool, Description("Get exchange rate for a currency pair.")]
-    public static ExchangeRateResult GetExchangeRate(
+    [McpServerTool, Description("Get currency exchange rate.")]
+    public static ExchangeRateResult GetCurrencyExchangeRate(
         [Description("The base currency code.")] string baseCurrency,
         [Description("The target currency code.")] string targetCurrency)
     {

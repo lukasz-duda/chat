@@ -1,6 +1,6 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.Ollama;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 using ModelContextProtocol.Client;
 
 namespace Chat.Service;
@@ -9,8 +9,7 @@ public static class ChatApi
 {
     public static async Task<IServiceCollection> AddChatApiAsync(this IServiceCollection services, IConfiguration configuration)
     {
-        var ollamaOptions = configuration.GetSection("Ollama").Get<OllamaOptions>()
-            ?? throw new InvalidOperationException("Ollama configuration is missing.");
+        var ollamaOptions = configuration.GetOllamaOptions();
 
         IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
         kernelBuilder.AddOllamaChatCompletion(
@@ -20,21 +19,7 @@ public static class ChatApi
 
         Kernel kernel = kernelBuilder.Build();
 
-
-        var transport = new HttpClientTransport(
-            new HttpClientTransportOptions
-            {
-                Endpoint = new Uri("http://localhost:5002"),
-                TransportMode = HttpTransportMode.StreamableHttp
-            });
-
-        await using var mcpClient = await McpClient.CreateAsync(transport);
-
-        var toolsResult = await mcpClient.ListToolsAsync();
-
-        kernel.Plugins.AddFromFunctions(
-            pluginName: "ExchangeRateTools",
-            functions: toolsResult.Select(tool => tool.AsKernelFunction()));
+        await kernel.AddMcpTools(configuration);
 
         kernel.Plugins.AddFromType<WeatherPlugin>();
 
@@ -45,7 +30,24 @@ public static class ChatApi
         return services;
     }
 
-    public record OllamaOptions(string BaseUrl, string Model);
+    private static async Task AddMcpTools(this Kernel kernel, IConfiguration configuration)
+    {
+        var exchangeRateApi = configuration.GetExchangeRateApiEndpoint();
+
+        var transport = new HttpClientTransport(
+        new HttpClientTransportOptions
+        {
+            Endpoint = new Uri(exchangeRateApi),
+            TransportMode = HttpTransportMode.StreamableHttp
+        });
+        var mcpClient = await McpClient.CreateAsync(transport);
+
+        var toolsResult = await mcpClient.ListToolsAsync();
+
+        kernel.Plugins.AddFromFunctions(
+            pluginName: "ExchangeRateTools",
+            functions: toolsResult.Select(tool => tool.AsKernelFunction()));
+    }
 
     public static IEndpointRouteBuilder MapChat(this IEndpointRouteBuilder app)
     {
@@ -64,7 +66,7 @@ public static class ChatApi
 
             var responseChunks = chatService.GetStreamingChatMessageContentsAsync(
                 history,
-                executionSettings: new OllamaPromptExecutionSettings
+                executionSettings: new OpenAIPromptExecutionSettings
                 {
                     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
                 }, kernel: kernel);

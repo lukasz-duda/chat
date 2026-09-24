@@ -7,6 +7,8 @@ builder.Services
 
 var app = builder.Build();
 
+app.MapGet("/", () => "ExchangeRate.McpServer");
+
 app.MapMcp();
 
 app.Run();

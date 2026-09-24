@@ -21,7 +21,7 @@ Accept: application/json, text/event-stream
   "id": "3",
   "method": "tools/call",
   "params": {
-    "name": "get_exchange_rate",
+    "name": "get_currency_exchange_rate",
     "arguments": {
       "baseCurrency": "USD",
       "targetCurrency": "PLN"

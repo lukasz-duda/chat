@@ -54,9 +54,9 @@ Test prompts:
 
 | Test          | Prompt                                    | Expected         |
 | ------------- | ----------------------------------------- | ---------------- |
-| System Prompt | Whats your name?                          | Adam             |
+| System Prompt | What's your name?                          | Adam             |
 | Function Call | Is it good weather for running in Warsaw? | 15°C, Light Rain |
-| MCP Tool      | What's exchange rate from USD to PLN?     | 4                |
+| MCP Tool      | How much is 5 USD in PLN?                 | 20 PLN           |
 
 Read more:
 
