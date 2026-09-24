@@ -1,5 +1,7 @@
 import { useState, type SubmitEvent } from "react";
 
+import "./chat.css";
+
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -53,7 +55,7 @@ export function Chat() {
         }
       }
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Nieznany błąd");
+      setError(error instanceof Error ? error.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -61,22 +63,16 @@ export function Chat() {
 
   return (
     <div className="chat-container">
-      <div className="message-container">
+      <div className="messages-container">
         {messages.map((m, idx) => (
           <div key={idx} className={`${m.role}-message`}>
-            <strong>{m.role === "user" ? "Ty: " : "AI: "}</strong>
             <span>{m.content}</span>
           </div>
         ))}
-        {loading && (
-          <div className="loading-message">
-            <em>Przetwarzanie...</em>
-          </div>
-        )}
-        {error && (
-          <div className="error-message">
-            <strong>Błąd: </strong> {error}
-          </div>
+        {loading ? (
+          <div className="loading-message">Processing...</div>
+        ) : (
+          error && <div className="error-message">{error}</div>
         )}
       </div>
 
@@ -85,10 +81,11 @@ export function Chat() {
           className="new-message-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Napisz wiadomość..."
+          placeholder="Write a message..."
+          autoFocus={true}
         />
         <button type="submit" disabled={loading} className="send-button">
-          Wyślij
+          Send
         </button>
       </form>
     </div>

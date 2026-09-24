@@ -1,0 +1,90 @@
+:root {
+  font-size: 16px;
+}
+
+body {
+  margin: 1rem;
+}
+
+div,
+span,
+input,
+button {
+  font-family: Verdana;
+  font-size: 1rem;
+}
+
+.chat-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: rgb(238, 238, 238, 0.3);
+}
+
+.messages-container {
+  padding: 2rem;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.user-message,
+.assistant-message {
+  margin-bottom: 2rem;
+}
+
+.user-message span,
+.assistant-message span {
+  display: inline-block;
+  border-radius: 1rem;
+  padding: 0.7rem;
+}
+
+.user-message {
+  text-align: right;
+}
+
+.user-message span,
+.send-button {
+  background-color: rgb(95, 211, 23, 0.3);
+  border: solid 2px rgb(95, 211, 23);
+  color: rgb(0, 0, 0, 0.85);
+}
+
+.assistant-message {
+  text-align: left;
+}
+
+.assistant-message span {
+  background-color: rgb(50, 135, 220, 0.3);
+  border: solid 2px rgb(50, 135, 220);
+  color: rgb(0, 0, 0, 0.85);
+}
+
+.loading-message {
+  color: rgb(136, 136, 136, 0.8);
+}
+
+.error-message {
+  color: rgb(255, 0, 0, 0.8);
+  margin-top: 1rem;
+}
+
+.new-message-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.new-message-input {
+  flex-grow: 1;
+  padding: 8px;
+}
+
+.new-message-input {
+  outline: none;
+  border: 2px solid rgb(95, 211, 23);
+}
+
+.send-button {
+  padding: 8px 16px;
+}
