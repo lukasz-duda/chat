@@ -1,5 +1,15 @@
 # Chat
 
+Architecture:
+
+```
+chat-ui
+    |-> Chat.Service
+            |-> WeatherPlugin.GetWeather
+            |-> Exchange.McpServer
+                        |-> ExchangeRate.GetExchangeRate
+```
+
 Requirements:
 
 - [Docker](https://docs.docker.com/engine/install/ubuntu/)

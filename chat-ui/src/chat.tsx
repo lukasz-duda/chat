@@ -1,9 +1,10 @@
 import { useState, type SubmitEvent } from "react";
 
+import { streamChat, type ChatMessage } from "./chat-api";
 import "./chat.css";
 
 export function Chat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -12,7 +13,7 @@ export function Chat() {
     e.preventDefault();
     if (!input.trim() || loading) return;
 
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: ChatMessage = { role: "user", content: input };
     const updatedMessages = [...messages, userMessage];
 
     setMessages(updatedMessages);
@@ -22,37 +23,14 @@ export function Chat() {
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const response = await fetch("http://localhost:5001/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: updatedMessages }),
-      });
-
-      if (!response.body) return;
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-
-        const lines = chunk.split("\n");
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const textToken = line.replace("data: ", "");
-
-            setMessages((prev) => {
-              const last = prev[prev.length - 1];
-              return [
-                ...prev.slice(0, -1),
-                { ...last, content: last.content + textToken },
-              ];
-            });
-          }
-        }
+      for await (const textToken of streamChat(updatedMessages)) {
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          return [
+            ...prev.slice(0, -1),
+            { ...last, content: last.content + textToken },
+          ];
+        });
       }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Unknown error");
@@ -90,9 +68,4 @@ export function Chat() {
       </form>
     </div>
   );
-}
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
 }
