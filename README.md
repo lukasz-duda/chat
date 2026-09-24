@@ -18,6 +18,13 @@ Pull model:
 docker exec -it ollama ollama pull llama3.2:3b
 ```
 
+Start exchange rate MCP server:
+
+```bash
+cd ExchangeRate.McpServer
+dotnet run
+```
+
 Start chat service:
 
 ```bash
@@ -39,6 +46,7 @@ Test prompts:
 | ------------- | ----------------------------------------- | ---------------- |
 | System Prompt | Whats your name?                          | Adam             |
 | Function Call | Is it good weather for running in Warsaw? | 15°C, Light Rain |
+| MCP Tool      | What's exchange rate from USD to PLN?     | 4                |
 
 Read more:
 

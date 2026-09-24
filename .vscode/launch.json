@@ -1,11 +1,17 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "C#: Chat.Service Debug",
-            "type": "dotnet",
-            "request": "launch",
-            "projectPath": "${workspaceFolder}/Chat.Service/Chat.Service.csproj"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C#: Chat.Service Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/Chat.Service/Chat.Service.csproj"
+    },
+    {
+      "name": "C#: ExchangeRate.McpServer Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/ExchangeRate.McpServer/ExchangeRate.McpServer.csproj"
+    }
+  ]
 }

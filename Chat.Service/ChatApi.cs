@@ -1,12 +1,13 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.Ollama;
+using ModelContextProtocol.Client;
 
 namespace Chat.Service;
 
 public static class ChatApi
 {
-    public static IServiceCollection AddChatApi(this IServiceCollection services, IConfiguration configuration)
+    public static async Task<IServiceCollection> AddChatApiAsync(this IServiceCollection services, IConfiguration configuration)
     {
         var ollamaOptions = configuration.GetSection("Ollama").Get<OllamaOptions>()
             ?? throw new InvalidOperationException("Ollama configuration is missing.");
@@ -19,7 +20,24 @@ public static class ChatApi
 
         Kernel kernel = kernelBuilder.Build();
 
+
+        var transport = new HttpClientTransport(
+            new HttpClientTransportOptions
+            {
+                Endpoint = new Uri("http://localhost:5002"),
+                TransportMode = HttpTransportMode.StreamableHttp
+            });
+
+        await using var mcpClient = await McpClient.CreateAsync(transport);
+
+        var toolsResult = await mcpClient.ListToolsAsync();
+
+        kernel.Plugins.AddFromFunctions(
+            pluginName: "ExchangeRateTools",
+            functions: toolsResult.Select(tool => tool.AsKernelFunction()));
+
         kernel.Plugins.AddFromType<WeatherPlugin>();
+
         services.AddSingleton(kernel);
         var chatService = kernel.GetRequiredService<IChatCompletionService>();
         services.AddSingleton(chatService);

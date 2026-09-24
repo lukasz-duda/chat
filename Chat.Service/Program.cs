@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddChatApi(builder.Configuration);
+await builder.Services.AddChatApiAsync(builder.Configuration);
 
 var app = builder.Build();
 
