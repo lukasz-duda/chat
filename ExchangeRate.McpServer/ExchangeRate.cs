@@ -4,13 +4,15 @@ using ModelContextProtocol.Server;
 namespace ExchangeRate.McpServer;
 
 [McpServerToolType]
-public static class ExchangeRate
+public class ExchangeRate
 {
     [McpServerTool, Description("Get currency exchange rate.")]
-    public static ExchangeRateResult GetCurrencyExchangeRate(
+    public ExchangeRateResult GetCurrencyExchangeRate(
         [Description("The base currency code.")] string baseCurrency,
-        [Description("The target currency code.")] string targetCurrency)
+        [Description("The target currency code.")] string targetCurrency,
+        ILogger<ExchangeRate> logger)
     {
+        logger.LogInformation("Getting exchange rate from {baseCurrency} to {targetCurrency}", baseCurrency, targetCurrency);
         var normalizedBaseCurrency = baseCurrency.ToUpperInvariant();
         var normalizedTargetCurrency = targetCurrency.ToUpperInvariant();
         var rate = (normalizedBaseCurrency, normalizedTargetCurrency) switch

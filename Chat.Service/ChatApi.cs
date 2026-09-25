@@ -12,6 +12,7 @@ public static class ChatApi
         var ollamaOptions = configuration.GetOllamaOptions();
 
         IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+        kernelBuilder.Services.AddLogging(logging => logging.AddConsole());
         kernelBuilder.AddOllamaChatCompletion(
             modelId: ollamaOptions.Model,
             endpoint: new Uri(ollamaOptions.BaseUrl)
