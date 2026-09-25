@@ -54,7 +54,7 @@ Test prompts:
 
 | Test          | Prompt                                    | Expected         |
 | ------------- | ----------------------------------------- | ---------------- |
-| System Prompt | What's your name?                          | Adam             |
+| System Prompt | What's your name?                         | Adam             |
 | Function Call | Is it good weather for running in Warsaw? | 15°C, Light Rain |
 | MCP Tool      | How much is 5 USD in PLN?                 | 20 PLN           |
 

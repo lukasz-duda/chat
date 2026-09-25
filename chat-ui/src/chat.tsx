@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 
 import { streamChat, type ChatMessage } from "./chat-api";
 import "./chat.css";
@@ -39,9 +39,18 @@ export function Chat() {
     }
   };
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const messagesContainer = messagesContainerRef.current;
+    if (messagesContainer) {
+      messagesContainer.scrollTo(0, messagesContainer.scrollHeight);
+    }
+  }, [messages]);
+
   return (
     <div className="chat-container">
-      <div className="messages-container">
+      <div ref={messagesContainerRef} className="messages-container">
         {messages.map((m, idx) => (
           <div key={idx} className={`${m.role}-message`}>
             <span>{m.content}</span>
