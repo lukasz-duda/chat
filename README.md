@@ -5,6 +5,7 @@ Architecture:
 ```
 chat-ui
     |-> Chat.Service
+            |-> Ollama
             |-> WeatherPlugin.GetWeather
             |-> Exchange.McpServer
                         |-> ExchangeRate.GetExchangeRate
@@ -64,3 +65,4 @@ Read more:
 - [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/get-started/quick-start-guide?toc=%2Fsemantic-kernel%2Ftoc.json&pivots=programming-language-csharp)
 - [The Agent–User Interaction (AG-UI) Protocol](https://docs.ag-ui.com/introduction)
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro)
+- [Agent2Agent (A2A) Protocol](https://a2a-protocol.org/latest/)
