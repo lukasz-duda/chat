@@ -51,6 +51,8 @@ npm i
 npm run dev
 ```
 
+[start.webm](https://github.com/user-attachments/assets/24968f27-eb82-4c07-9acc-8c3cf7b9f0b9)
+
 Test prompts:
 
 | Test          | Prompt                                    | Expected         |
@@ -58,6 +60,10 @@ Test prompts:
 | System Prompt | What's your name?                         | Adam             |
 | Function Call | Is it good weather for running in Warsaw? | 15°C, Light Rain |
 | MCP Tool      | How much is 5 USD in PLN?                 | 20 PLN           |
+
+[chat.webm](https://github.com/user-attachments/assets/f605b21e-d80c-4455-a1f3-c480d85884b7)
+
+[opencode.webm](https://github.com/user-attachments/assets/890a62a5-0e5f-49d3-8df2-f7e93a3a7dc8)
 
 Read more:
 
